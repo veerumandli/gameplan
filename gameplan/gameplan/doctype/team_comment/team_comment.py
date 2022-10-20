@@ -3,9 +3,10 @@
 
 import frappe
 from frappe.model.document import Document
-from gameplan.gameplan.doctype.team_discussion.search import remove_index, update_index
+from gameplan.gameplan.doctype.team_discussion.search import DiscussionsSearchIndex
 from gameplan.mixins.mentions import HasMentions
 from gameplan.mixins.reactions import HasReactions
+from frappe.utils import cstr, strip_html_tags
 
 class TeamComment(HasMentions, HasReactions, Document):
 	on_delete_set_null = ["Team Notification"]
@@ -45,8 +46,20 @@ class TeamComment(HasMentions, HasReactions, Document):
 		self.notify_reactions()
 
 	def update_discussion_index(self):
+		d = DiscussionsSearchIndex()
 		if self.reference_doctype == "Team Discussion":
 			if self.deleted_at:
-				remove_index(self)
+				record = frappe._dict({
+					'name': self.reference_name,
+					'comment': self.name
+				})
+				d.remove_index_for_records([record])
 			else:
-				update_index(self)
+				record = frappe._dict({
+					'name': self.reference_name,
+					'title': '',
+					'content': strip_html_tags(self.content),
+					'modified': cstr(self.modified),
+					'comment': self.name
+				})
+				d.create_index_for_records([record])

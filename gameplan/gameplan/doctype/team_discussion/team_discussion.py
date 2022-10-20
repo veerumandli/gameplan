@@ -3,11 +3,11 @@
 import re
 import frappe
 from frappe.model.document import Document
-from gameplan.gameplan.doctype.team_discussion.search import update_index
+from gameplan.gameplan.doctype.team_discussion.search import DiscussionsSearchIndex
 from gameplan.mixins.activity import HasActivity
 from gameplan.mixins.mentions import HasMentions
 from gameplan.mixins.reactions import HasReactions
-
+from frappe.utils import cstr, strip_html_tags
 class TeamDiscussion(HasActivity, HasMentions, HasReactions, Document):
 	on_delete_cascade = ['Team Comment', 'Team Discussion Visit']
 	on_delete_set_null = ['Team Notification']
@@ -40,7 +40,7 @@ class TeamDiscussion(HasActivity, HasMentions, HasReactions, Document):
 		self.notify_mentions()
 		self.notify_reactions()
 		self.log_title_update()
-		update_index(self)
+		self.update_index()
 
 	def before_save(self):
 		self.update_slug()
@@ -62,6 +62,17 @@ class TeamDiscussion(HasActivity, HasMentions, HasReactions, Document):
 				'old_title': self.get_doc_before_save().title,
 				'new_title': self.title
 			})
+
+	def update_index(self):
+		d = DiscussionsSearchIndex()
+		record = frappe._dict({
+			'name': self.name,
+			'title': self.title,
+			'content': strip_html_tags(self.content),
+			'modified': cstr(self.modified),
+			'comment': ''
+		})
+		d.create_index_for_records([record])
 
 	@frappe.whitelist()
 	def track_visit(self):
