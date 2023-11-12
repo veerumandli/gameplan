@@ -25,7 +25,17 @@
         >
           Save
         </Button>
+        <Dropdown
+          :options="[
+            { label: 'Share', onClick: () => (shareDialog.show = true) },
+          ]"
+          :button="{
+            icon: LucideMoreHorizontal,
+          }"
+        />
       </div>
+      <Dialog :options="{ title: 'Share page' }" v-model="shareDialog.show">
+      </Dialog>
     </header>
     <div class="mx-auto w-full max-w-4xl px-5">
       <div class="py-6" v-if="page.doc">
@@ -55,14 +65,34 @@
   </div>
 </template>
 <script>
-import { Breadcrumbs, TextEditor, getCachedDocumentResource } from 'frappe-ui'
+
+
+import {
+  Breadcrumbs,
+  TextEditor,
+  Dropdown,
+  getCachedDocumentResource,
+  Dialog,
+} from 'frappe-ui'
 import { getTeam } from '@/data/teams'
 import { getProject } from '@/data/projects'
+import LucideMoreHorizontal from '~icons/lucide/more-horizontal'
 
 export default {
   name: 'Page',
   props: ['pageId', 'slug'],
   components: { TextEditor, Breadcrumbs },
+  //   components: { TextEditor, Dropdown, Dialog },
+  data() {
+    return {
+      shareDialog: {
+        show: false,
+      },
+    }
+  },
+  setup() {
+    return { LucideMoreHorizontal }
+  },
   resources: {
     page() {
       return {

@@ -7,12 +7,15 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "section_break_wkrd",
   "title",
   "content",
   "slug",
   "project",
   "user",
-  "team"
+  "team",
+  "section_break_xrhd",
+  "shared_with_users"
  ],
  "fields": [
   {
@@ -50,11 +53,25 @@
    "label": "Team",
    "options": "GP Team",
    "read_only": 1
+  },
+  {
+   "fieldname": "section_break_wkrd",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "section_break_xrhd",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "shared_with_users",
+   "fieldtype": "Table",
+   "label": "Shared With Users",
+   "options": "GP Page User"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-09-18 21:30:16.417667",
+ "modified": "2023-09-19 20:38:44.765388",
  "modified_by": "Administrator",
  "module": "Gameplan",
  "name": "GP Page",

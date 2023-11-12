@@ -159,6 +159,7 @@ class GPDiscussion(HasActivity, HasMentions, HasReactions, Document):
 		self.save()
 
 	def update_discussions_count(self, delta=1):
-		project = frappe.get_doc("GP Project", self.project)
-		project.discussions_count = project.discussions_count + delta
-		project.save(ignore_permissions=True)
+		if self.project:
+			project = frappe.get_doc("GP Project", self.project)
+			project.discussions_count = project.discussions_count + delta
+			project.save(ignore_permissions=True)

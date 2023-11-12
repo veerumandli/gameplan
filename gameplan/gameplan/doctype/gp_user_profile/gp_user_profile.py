@@ -61,7 +61,7 @@ class GPUserProfile(Document):
 
 def create_user_profile(doc, method=None):
 	if not frappe.db.exists("GP User Profile", {"user": doc.name}):
-		frappe.get_doc(doctype="GP User Profile", user=doc.name).insert(ignore_permissions=True)
+		frappe.get_doc(doctype="GP User Profile", user=doc.name, image=doc.user_image).insert(ignore_permissions=True)
 		frappe.db.commit()
 
 

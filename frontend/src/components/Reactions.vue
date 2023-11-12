@@ -6,7 +6,7 @@
           aria-label="Add a reaction"
           :disabled="$resources.batch.loading"
           @click="togglePopover()"
-          class="flex h-full items-center justify-center rounded-full px-2 py-1 transition bg-gray-100 text-gray-700 hover:bg-gray-200"
+          class="flex h-full items-center justify-center rounded-full bg-gray-100 px-2 py-1 text-gray-700 transition hover:bg-gray-200"
           :class="{ 'bg-gray-200': isOpen }"
         >
           <ReactionFaceIcon />
@@ -58,8 +58,8 @@
             class="flex items-center justify-center rounded-full px-2 py-1 text-sm transition"
             :class="[
               reactions.userReacted
-                ? 'bg-amber-100 hover:bg-amber-200 text-amber-700'
-                : 'bg-gray-100 hover:bg-gray-200 text-gray-700',
+                ? 'bg-amber-100 text-amber-700 hover:bg-amber-200'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200',
             ]"
             @click="toggleReaction(emoji)"
           >
@@ -106,7 +106,7 @@ export default {
         onSuccess(responses) {
           this.changes = []
           for (let response of responses) {
-            if (response.message?.reactions) {
+            if (response.reactions) {
               let reactions = response.message.reactions.map((d) => ({
                 name: d.name,
                 emoji: d.emoji,
