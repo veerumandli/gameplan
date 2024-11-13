@@ -59,6 +59,7 @@ function showNewTaskDialog() {
 usePageMeta(() => {
     return {
         title: 'All Tasks',
+        emoji: '👨‍👩‍👧‍👦',
     }
 })
 </script>
