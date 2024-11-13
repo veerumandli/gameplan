@@ -38,7 +38,7 @@ let newTaskDialog = ref(null)
 
 let listOptions = computed(() => ({
     filters: {},
-    pageLength: 999
+    pageLength: 999,
     orderBy: 'creation desc'
 }))
 
