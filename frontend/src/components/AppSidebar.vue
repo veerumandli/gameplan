@@ -162,9 +162,9 @@ export default {
           name: 'All Tasks',
           icon: LucideListTodo,
           route: {
-            name: 'CedTasks',
+            name: 'CedAll',
           },
-          isActive: /CedTasks/g.test(this.$route.name),
+          isActive: /CedAll/g.test(this.$route.name),
         },
         {
           name: 'My Tasks',
