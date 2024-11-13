@@ -30,6 +30,11 @@ const routes = [
     component: () => import('@/pages/Discussions.vue'),
   },
   {
+    name: 'CedTasks',
+    path: '/cedtasks',
+    component: () => import('@/pages/MyTasks.vue'),
+  },
+  {
     name: 'MyTasks',
     path: '/tasks',
     component: () => import('@/pages/MyTasks.vue'),
