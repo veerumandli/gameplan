@@ -45,6 +45,34 @@ const orderOptions = [
     { label: 'Title DESC', value: 'title desc' }
 ]
 
+
+// Status Filter Options
+const statusOptions = [
+    { label: 'All', value: '' },
+    { label: 'Open', value: 'Open' },
+    { label: 'In Progress', value: 'In Progress' },
+    { label: 'Closed', value: 'Closed' }
+]
+
+// People Filter Options (Dynamic Loading)
+const peopleOptions = ref([])
+
+
+// Load Assignees for the People Filter
+async function loadPeopleOptions() {
+    const response = await frappe.call({
+        method: 'gameplan.api.get_all_users', // Adjust the API method based on your backend
+    })
+    if (response.message) {
+        peopleOptions.value = [{ label: 'All', value: '' }].concat(
+            response.message.map(user => ({
+                label: user.full_name || user.name,
+                value: user.name,
+            }))
+        )
+    }
+}
+
 let listOptions = computed(() => ({
     filters: filters.value,
     pageLength: 999,
@@ -72,11 +100,13 @@ usePageMeta(() => {
     }
 })
 
-// Watch for changes in sorting and reload tasks
-watch(orderBy, () => {
+// Watch for Sorting Changes and Reload Tasks
+watch([orderBy, filters], () => {
     const tasks = getCachedListResource(['Tasks', listOptions.value])
     if (tasks) {
         tasks.reload()
     }
 })
+// Initialize People Options
+loadPeopleOptions()
 </script>
