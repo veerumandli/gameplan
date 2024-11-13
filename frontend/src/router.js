@@ -32,7 +32,7 @@ const routes = [
   {
     name: 'CedTasks',
     path: '/cedtasks',
-    component: () => import('@/pages/MyTasks.vue'),
+    component: () => import('@/pages/CedTasks.vue'),
   },
   {
     name: 'MyTasks',
