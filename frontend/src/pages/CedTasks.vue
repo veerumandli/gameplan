@@ -4,15 +4,13 @@
             <Breadcrumbs class="h-7" :items="[{ label: 'All Tasks', route: { name: 'CedAll' } }]" />
             <div class="flex">
                 <!-- Status Filter -->
-                <Select class="w-36 pl-7 pr-7 mr-4" v-model="filters.status" :options="statusOptions"
-                    placeholder="Filter by Status">
+                <Select class="w-36 pl-7 pr-7 mr-4" v-model="filters.status" :options="statusOptions">
                     <template #prefix>
                         <LucideFilter class="w-4 text-gray-600" />
                     </template>
                 </Select>
                 <!-- People Filter -->
-                <Select class="w-44 pl-7 pr-7 mr-4" v-model="filters.assignee" :options="peopleOptions"
-                    placeholder="Filter by Assignee">
+                <Select class="w-44 pl-7 pr-7 mr-4" v-model="filters.assignee" :options="peopleOptions">
                     <template #prefix>
                         <LucideUser class="w-4 text-gray-600" />
                     </template>
@@ -77,9 +75,9 @@ const peopleOptions = ref([])
 
 // Load Assignees for the People Filter
 async function loadPeopleOptions() {
-    const response = await call({
-        method: 'gameplan.extends.client.get_list', // Adjust the API method based on your backend
-    })
+    const response = await call(
+        'gameplan.api.get_user_info', { data: {} }// Adjust the API method based on your backend
+    )
     if (response.message) {
         peopleOptions.value = [{ label: 'All', value: '' }].concat(
             response.message.map(user => ({
