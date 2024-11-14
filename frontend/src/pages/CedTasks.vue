@@ -4,14 +4,14 @@
             <Breadcrumbs class="h-7" :items="[{ label: 'All Tasks', route: { name: 'CedAll' } }]" />
             <div class="flex">
                 <!-- Status Filter -->
-                <Select class="w-36 mr-4" v-model="filters.status" :options="statusOptions"
+                <Select class="w-36 pl-7 pr-7 mr-4" v-model="filters.status" :options="statusOptions"
                     placeholder="Filter by Status">
                     <template #prefix>
                         <LucideFilter class="w-4 text-gray-600" />
                     </template>
                 </Select>
                 <!-- People Filter -->
-                <Select class="w-44 mr-4" v-model="filters.assignee" :options="peopleOptions"
+                <Select class="w-44 pl-7 pr-7 mr-4" v-model="filters.assignee" :options="peopleOptions"
                     placeholder="Filter by Assignee">
                     <template #prefix>
                         <LucideUser class="w-4 text-gray-600" />
@@ -42,7 +42,7 @@
 </template>
 <script setup>
 import { ref, computed, watch } from 'vue'
-import { getCachedListResource, usePageMeta, Breadcrumbs, Select } from 'frappe-ui'
+import { getCachedListResource, usePageMeta, Breadcrumbs, Select, call } from 'frappe-ui'
 import { getUser } from '@/data/users'
 
 let newTaskDialog = ref(null)
@@ -77,7 +77,7 @@ const peopleOptions = ref([])
 
 // Load Assignees for the People Filter
 async function loadPeopleOptions() {
-    const response = await frappe.call({
+    const response = await call({
         method: 'gameplan.api.get_all_users', // Adjust the API method based on your backend
     })
     if (response.message) {
