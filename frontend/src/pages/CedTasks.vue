@@ -10,7 +10,8 @@
                     </template>
                 </Select>
                 <!-- People Filter -->
-                <Select class="w-44 pl-7 pr-7 mr-4" v-model="filters.assignee" :options="peopleOptions">
+                <Select class="w-44 pl-7 pr-7 mr-4" v-model="filters.assignee" :options="peopleOptions"
+                    :key="peopleOptions.length">
                     <template #prefix>
                         <LucideUser class="w-4 text-gray-600" />
                     </template>
@@ -64,9 +65,11 @@ const orderOptions = [
 // Status Filter Options
 const statusOptions = [
     { label: 'All', value: '' },
-    { label: 'Open', value: 'Open' },
+    { label: 'Backlog', value: 'Backlog' },
+    { label: 'Todo', value: 'Todo' },
     { label: 'In Progress', value: 'In Progress' },
-    { label: 'Closed', value: 'Closed' }
+    { label: 'Done', value: 'Done' },
+    { label: 'Canceled', value: 'Canceled' }
 ]
 
 // People Filter Options (Dynamic Loading)
@@ -75,27 +78,41 @@ const peopleOptions = ref([])
 
 // Load Assignees for the People Filter
 async function loadPeopleOptions() {
-    const response = await call(
-        'gameplan.api.get_user_info', { data: {} }// Adjust the API method based on your backend
-    )
-    if (response.message) {
-        peopleOptions.value = [{ label: 'All', value: '' }].concat(
-            response.message.map(user => ({
+    try {
+        const response = await call('gameplan.api.get_user_info', { data: {} });
+        if (response.message) {
+            peopleOptions.value = [{ label: 'All', value: '' }, ...response.message.map(user => ({
                 label: user.full_name || user.name,
                 value: user.name,
-            }))
-        )
+            }))];
+            // Manually trigger dropdown component update
+            filters.value.assignee = ''; // Reset the dropdown to trigger a UI update
+        }
+    } catch (error) {
+        console.error("Failed to load people options:", error);
     }
 }
 
-let listOptions = computed(() => ({
-    filters: {
-        status: filters.value.status,
-        assigned_to: filters.value.assignee,
-    },
-    pageLength: 999,
-    orderBy: orderBy.value
-}))
+let listOptions = computed(() => {
+    const appliedFilters = {}
+
+    // Only add status filter if it has a valid value
+    if (filters.value.status && filters.value.status !== 'all') {
+        appliedFilters.status = filters.value.status
+    }
+
+    // Only add assigned_to filter if it has a valid value
+    if (filters.value.assignee && filters.value.assignee !== 'all') {
+        appliedFilters.assigned_to = filters.value.assignee
+    }
+
+    return {
+        filters: appliedFilters,
+        pageLength: 999,
+        orderBy: orderBy.value,
+    }
+})
+
 
 function showNewTaskDialog() {
     newTaskDialog.value.show({
@@ -123,6 +140,13 @@ watch([orderBy, filters], () => {
     const tasks = getCachedListResource(['Tasks', listOptions.value])
     if (tasks) {
         tasks.reload()
+    }
+})
+
+// Watch peopleOptions to ensure it triggers a re-render
+watch(peopleOptions, (newOptions) => {
+    if (newOptions.length > 0) {
+        console.log("People options updated:", newOptions)
     }
 })
 // Initialize People Options
