@@ -3,6 +3,20 @@
         <header class="sticky top-0 z-10 flex items-center justify-between border-b bg-white px-5 py-2.5">
             <Breadcrumbs class="h-7" :items="[{ label: 'All Tasks', route: { name: 'CedAll' } }]" />
             <div class="flex">
+                <!-- Status Filter -->
+                <Select class="w-36 mr-4" v-model="filters.status" :options="statusOptions"
+                    placeholder="Filter by Status">
+                    <template #prefix>
+                        <LucideFilter class="w-4 text-gray-600" />
+                    </template>
+                </Select>
+                <!-- People Filter -->
+                <Select class="w-44 mr-4" v-model="filters.assignee" :options="peopleOptions"
+                    placeholder="Filter by Assignee">
+                    <template #prefix>
+                        <LucideUser class="w-4 text-gray-600" />
+                    </template>
+                </Select>
                 <Select class="w-44 pl-7 pr-7 mr-4" v-model="orderBy" :options="orderOptions">
                     <template #prefix>
                         <LucideArrowDownUp class="w-4 text-gray-600" />
@@ -35,7 +49,10 @@ let newTaskDialog = ref(null)
 
 // State Variables
 const orderBy = ref('creation desc')
-const filters = ref({}) // Filters can be expanded for additional criteria
+const filters = ref({
+    status: '', // Status filter
+    assignee: '', // Assignee filter
+}) // Filters can be expanded for additional criteria
 
 // Sorting Options
 const orderOptions = [
@@ -74,7 +91,10 @@ async function loadPeopleOptions() {
 }
 
 let listOptions = computed(() => ({
-    filters: filters.value,
+    filters: {
+        status: filters.value.status,
+        assigned_to: filters.value.assignee,
+    },
     pageLength: 999,
     orderBy: orderBy.value
 }))
