@@ -20,7 +20,8 @@ def get_user_info(user=None):
     users = frappe.qb.get_query(
         "User",
         filters=filters,
-        fields=["name", "email", "enabled", "user_image", "full_name", "user_type"],
+        fields=["name", "email", "enabled",
+                "user_image", "full_name", "user_type"],
         order_by="full_name asc",
         distinct=True,
     ).run(as_dict=1)
@@ -138,7 +139,8 @@ def accept_invitation(key: str = None):
     if not key:
         frappe.throw("Invalid or expired key")
 
-    result = frappe.db.get_all("GP Invitation", filters={"key": key}, pluck="name")
+    result = frappe.db.get_all("GP Invitation", filters={
+                               "key": key}, pluck="name")
     if not result:
         frappe.throw("Invalid or expired key")
 
@@ -183,7 +185,8 @@ def get_unread_items():
         .left_join(Visit)
         .on((Visit.discussion == Discussion.name) & (Visit.user == frappe.session.user))
         .where(
-            (Visit.last_visit.isnull()) | (Visit.last_visit < Discussion.last_post_at)
+            (Visit.last_visit.isnull()) | (
+                Visit.last_visit < Discussion.last_post_at)
         )
         .groupby(Discussion.team)
     )
@@ -223,7 +226,8 @@ def get_unread_items_by_project(projects):
         .left_join(Visit)
         .on((Visit.discussion == Discussion.name) & (Visit.user == frappe.session.user))
         .where(
-            (Visit.last_visit.isnull()) | (Visit.last_visit < Discussion.last_post_at)
+            (Visit.last_visit.isnull()) | (
+                Visit.last_visit < Discussion.last_post_at)
         )
         .where(Discussion.project.isin(project_names))
         .groupby(Discussion.project)
@@ -257,7 +261,8 @@ def recent_projects():
     Project = frappe.qb.DocType("GP Project")
     Pin = frappe.qb.DocType("GP Pinned Project")
     pinned_projects_query = (
-        frappe.qb.from_(Pin).select(Pin.project).where(Pin.user == frappe.session.user)
+        frappe.qb.from_(Pin).select(Pin.project).where(
+            Pin.user == frappe.session.user)
     )
     projects = (
         frappe.qb.from_(ProjectVisit)
@@ -330,7 +335,8 @@ def active_projects():
 def onboarding(data):
     data = frappe.parse_json(data)
     team = frappe.get_doc(doctype="GP Team", title=data.team).insert()
-    frappe.get_doc(doctype="GP Project", team=team.name, title=data.project).insert()
+    frappe.get_doc(doctype="GP Project", team=team.name,
+                   title=data.project).insert()
     emails = ", ".join(data.emails)
     invite_by_email(emails, role="Gameplan Member")
     return team.name
@@ -362,7 +368,8 @@ def oauth_providers():
             if provider.provider_name == "Custom":
                 icon = get_icon_html(provider.icon, small=True)
             else:
-                icon = f"<img src='{provider.icon}' alt={provider.provider_name}>"
+                icon = f"<img src='{provider.icon}' alt={
+                    provider.provider_name}>"
 
         if provider.client_id and provider.base_url and get_oauth_keys(provider.name):
             out.append(
@@ -405,7 +412,8 @@ def search(query, start=0):
         d.name = name
         del d.id
         if doctype == "GP Comment":
-            comments_by_doctype.setdefault(d.payload["reference_doctype"], []).append(d)
+            comments_by_doctype.setdefault(
+                d.payload["reference_doctype"], []).append(d)
         else:
             d.project = d.payload.get("project")
             d.team = d.payload.get("team")
@@ -460,7 +468,8 @@ def search(query, start=0):
 
 @frappe.whitelist()
 def check_bookmark(discussionId):
-    doc = frappe.db.get_value("GP Bookmark", {"user": frappe.session.user}, "name")
+    doc = frappe.db.get_value(
+        "GP Bookmark", {"user": frappe.session.user}, "name")
     if doc:
         bookmark = frappe.db.exists(
             {
@@ -477,7 +486,8 @@ def check_bookmark(discussionId):
 @frappe.whitelist()
 def bookmark_discussion(data):
     data = frappe.parse_json(data)
-    doc_name = frappe.db.get_value("GP Bookmark", {"user": frappe.session.user}, "name")
+    doc_name = frappe.db.get_value(
+        "GP Bookmark", {"user": frappe.session.user}, "name")
     if doc_name:
         doc = frappe.get_doc("GP Bookmark", doc_name)
         if data.remove_bookmark:
@@ -493,7 +503,8 @@ def bookmark_discussion(data):
         else:
             doc.append(
                 "bookmarks",
-                {"discussion": data.discussion, "date_added": frappe.utils.getdate()},
+                {"discussion": data.discussion,
+                    "date_added": frappe.utils.getdate()},
             )
             doc.save(ignore_permissions=True)
             return "Bookmark added"
@@ -512,7 +523,8 @@ def bookmark_discussion(data):
 @frappe.whitelist()
 def get_bookmarks():
     bookmark_child = frappe.qb.DocType("GP Bookmark Child")
-    doc_name = frappe.db.get_value("GP Bookmark", {"user": frappe.session.user}, "name")
+    doc_name = frappe.db.get_value(
+        "GP Bookmark", {"user": frappe.session.user}, "name")
 
     if doc_name:
         bookmarks = (
@@ -525,3 +537,10 @@ def get_bookmarks():
         return bookmarks
 
     return []
+
+
+@frappe.whitelist()
+def get_all_users():
+    users = frappe.get_all(
+        "User", fields=["name", "full_name"], filters={"enabled": 1})
+    return users
