@@ -80,8 +80,8 @@ const peopleOptions = ref([])
 async function loadPeopleOptions() {
     try {
         const response = await call('gameplan.api.get_user_info', { data: {} });
-        if (response.message) {
-            peopleOptions.value = [{ label: 'All', value: '' }, ...response.message.map(user => ({
+        if (response.length > 0) {
+            peopleOptions.value = [{ label: 'All', value: '' }, ...response.map(user => ({
                 label: user.full_name || user.name,
                 value: user.name,
             }))];
