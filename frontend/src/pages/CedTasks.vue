@@ -78,7 +78,7 @@ const peopleOptions = ref([])
 // Load Assignees for the People Filter
 async function loadPeopleOptions() {
     const response = await call({
-        method: 'gameplan.api.get_all_users', // Adjust the API method based on your backend
+        method: 'gameplan.extends.client.get_list', // Adjust the API method based on your backend
     })
     if (response.message) {
         peopleOptions.value = [{ label: 'All', value: '' }].concat(

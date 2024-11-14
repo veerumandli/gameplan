@@ -537,10 +537,3 @@ def get_bookmarks():
         return bookmarks
 
     return []
-
-
-@frappe.whitelist()
-def get_all_users():
-    users = frappe.get_all(
-        "User", fields=["name", "full_name"], filters={"enabled": 1})
-    return users
