@@ -58,8 +58,8 @@
         <div v-for="team in activeTeams" :key="team.name">
           <Link :link="team" class="flex items-center rounded px-2 py-1 transition">
           <button @click.prevent="() => {
-              team.open = !team.open
-            }
+            team.open = !team.open
+          }
             " class="mr-1.5 grid h-4 w-4 place-items-center rounded hover:bg-surface-gray-3">
             <ChevronTriangle class="h-3 w-3 text-ink-gray-4 transition duration-200"
               :class="[team.open ? 'rotate-90' : 'rotate-0']" />
@@ -100,12 +100,12 @@
       </div>
     </div>
     <AddTeamDialog v-model:show="showAddTeamDialog" @success="(team) => {
-        showAddTeamDialog = false
-        $router.push({
-          name: 'TeamOverview',
-          params: { teamId: team.name },
-        })
-      }
+      showAddTeamDialog = false
+      $router.push({
+        name: 'TeamOverview',
+        params: { teamId: team.name },
+      })
+    }
       " />
   </div>
 </template>
@@ -169,6 +169,7 @@ export default {
             name: 'CedAll',
           },
           isActive: /CedAll/g.test(this.$route.name),
+          condition: () => this.$user().isNotGuest,
         },
         {
           name: 'My Tasks',
