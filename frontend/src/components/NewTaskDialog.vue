@@ -10,6 +10,7 @@
         },
       ],
     }"
+    :disableOutsideClickToClose="disableOutsideClickToClose"
     v-model="showDialog"
     @after-leave="newTask = initialData"
   >
@@ -36,8 +37,7 @@
           <Autocomplete
             placeholder="Assign a user"
             :options="assignableUsers"
-            :value="newTask.assigned_to"
-            @change="(option) => (newTask.assigned_to = option?.value || '')"
+            v-model="newTask.assigned_to"
           />
         </div>
         <ErrorMessage class="mt-2" :message="createTask.error" />
@@ -86,12 +86,10 @@ function statusOptions({ onClick }) {
 }
 
 const assignableUsers = computed(() => {
-  return activeUsers.value
-    .filter((user) => user.name != newTask.value.assigned_to)
-    .map((user) => ({
-      label: user.full_name,
-      value: user.name,
-    }))
+  return activeUsers.value.map((user) => ({
+    label: user.full_name,
+    value: user.name,
+  }))
 })
 
 let _onSuccess
@@ -102,8 +100,12 @@ function show({ defaults, onSuccess } = {}) {
 }
 
 function onCreateClick(close) {
+  let newTaskDoc = {
+    ...newTask.value,
+    assigned_to: newTask.value.assigned_to?.value,
+  }
   createTask
-    .submit(newTask.value, {
+    .submit(newTaskDoc, {
       validate() {
         if (!newTask.value.title) {
           return 'Task title is required'
@@ -113,6 +115,10 @@ function onCreateClick(close) {
     })
     .then(close())
 }
+
+let disableOutsideClickToClose = computed(() => {
+  return createTask.loading || newTask.value?.title != ''
+})
 
 defineExpose({ show })
 </script>

@@ -1,7 +1,7 @@
 <template>
   <div>
     <header
-      class="sticky top-0 z-10 flex items-center justify-between border-b bg-white px-5 py-2.5"
+      class="sticky top-0 z-10 flex items-center justify-between border-b bg-surface-white px-5 py-2.5"
     >
       <Breadcrumbs class="h-7" :items="breadcrumbs" />
     </header>
@@ -22,8 +22,8 @@ const props = defineProps({
   },
 })
 
+let route = useRoute()
 let breadcrumbs = computed(() => {
-  let route = useRoute()
   let task = getCachedDocumentResource('GP Task', route.params.taskId)
   let items = [
     {
